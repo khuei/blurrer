@@ -1,4 +1,5 @@
 #include <boost/program_options.hpp>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -59,6 +60,23 @@ conv(const std::vector<std::vector<float>> &image,
   return out;
 }
 
+std::vector<std::vector<float>> gaussian_kernel(int size, int strength) {
+  std::vector<std::vector<float>> kernel(size, std::vector<float>(size, 0));
+
+  double sigma = ((double)size / 2 > 1) ? (double)size / 2 : 1;
+  int k = (size - 1) / 2;
+
+  for (int i = 0; i < size; ++i) {
+    for (int j = 0; j < size; ++j) {
+      double exponent =
+          -((std::pow(i - k, 2) + std::pow(j - k, 2)) / (2 * sigma * sigma));
+      kernel[i][j] = (1 / (2 * M_PI * sigma * sigma)) * std::exp(exponent);
+    }
+  }
+
+  return kernel;
+}
+
 int main(int argc, char *argv[]) {
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()("input,i", boost::program_options::value<std::string>(),
@@ -80,6 +98,7 @@ int main(int argc, char *argv[]) {
   boost::program_options::notify(vm);
 
   int width, height, channels;
+  int strength = 5;
   unsigned char *image_data;
   std::string image_name;
 
@@ -87,6 +106,9 @@ int main(int argc, char *argv[]) {
     image_name = vm["input"].as<std::string>();
     image_data = stbi_load(image_name.c_str(), &width, &height, &channels, 0);
   }
+
+  if (vm.count("strength"))
+    strength = vm["strength"].as<int>();
 
   if (vm.count("help")) {
     std::cout << desc << "\n";
