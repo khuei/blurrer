@@ -1,5 +1,7 @@
 .POSIX:
 
+CC=g++
+
 VERSION = 0.1
 PREFIX = /usr/local
 MANPREFIX = $(PREFIX)/share/man
@@ -7,7 +9,7 @@ MANPREFIX = $(PREFIX)/share/man
 PKG_CONFIG = pkg-config
 
 BCFLAGS = $(CFLAGS)
-BLDFLAGS = `$(PKG_CONFIG) --cflags --libs json-c libcurl` -llexbor -lm
+BLDFLAGS = -lboost_program_options -lm
 
 SRC_DIR = $(shell pwd)
 SRCS = $(wildcard *.cpp)
