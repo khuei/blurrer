@@ -9,7 +9,7 @@ MANPREFIX = $(PREFIX)/share/man
 PKG_CONFIG = pkg-config
 
 BCFLAGS = $(CFLAGS)
-BLDFLAGS = -lboost_program_options -lm
+BLDFLAGS = `$(PKG_CONFIG) --cflags --libs stb`-lboost_program_options -lm
 
 SRC_DIR = $(shell pwd)
 SRCS = $(wildcard *.cpp)
