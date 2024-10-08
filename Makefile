@@ -13,7 +13,7 @@ BLDFLAGS = `$(PKG_CONFIG) --cflags --libs stb`-lboost_program_options -lm
 
 SRC_DIR = $(shell pwd)
 SRCS = $(wildcard *.cpp)
-OBJ = $(SRCS:%.c=%.o)
+OBJ = $(SRCS:%.cpp=%.o)
 
 all: options blurrer
 
