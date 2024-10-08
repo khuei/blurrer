@@ -18,7 +18,7 @@ convolution.
 - [ ] Median
 - [ ] Motion
 
-## Blur Comparison
+## Blur Method Comparison (Strength: 20)
 
 | Blurring Method | Original Image | Blurred Image |
 |----------------|---------------|------------------|
