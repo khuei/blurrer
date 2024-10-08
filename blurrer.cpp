@@ -77,6 +77,23 @@ std::vector<std::vector<float>> gaussian_kernel(int size, int strength) {
   return kernel;
 }
 
+std::vector<unsigned char>
+flatten_image(const std::vector<std::vector<std::vector<float>>> &image,
+              int width, int height, int channels) {
+  std::vector<unsigned char> flat_image(width * height * channels);
+
+  for (int i = 0; i < height; ++i) {
+    for (int j = 0; j < width; ++j) {
+      for (int c = 0; c < channels; ++c) {
+        flat_image[(i * width + j) * channels + c] =
+            static_cast<unsigned char>(image[i][j][c]);
+      }
+    }
+  }
+
+  return flat_image;
+}
+
 int main(int argc, char *argv[]) {
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()("input,i", boost::program_options::value<std::string>(),
@@ -136,22 +153,22 @@ int main(int argc, char *argv[]) {
   if (vm.count("algo"))
     algorithm = vm["algo"].as<std::string>();
 
-  std::vector<std::vector<float>> image(height, std::vector<float>(width));
+  std::vector<std::vector<std::vector<float>>> image(
+      height,
+      std::vector<std::vector<float>>(width, std::vector<float>(channels)));
+
   for (int i = 0; i < height; ++i) {
     for (int j = 0; j < width; ++j) {
-      image[i][j] = static_cast<float>(image_data[(i * width + j) * channels]);
+      for (int c = 0; c < channels; ++c) {
+        image[i][j][c] =
+            static_cast<float>(image_data[(i * width + j) * channels + c]);
+      }
     }
   }
 
-  std::vector<std::vector<float>> kernel;
-  std::vector<std::vector<float>> output_image;
-
-  if (algorithm == "gaussian")
-    kernel = gaussian_kernel(width, strength);
-
-  output_image = conv(image, kernel);
-
+  auto output_image = flatten_image(image, width, height, channels);
   std::string extension = output_name.substr(output_name.find_last_of('.') + 1);
+
   if (extension == "png") {
     stbi_write_png(output_name.c_str(), width, height, channels,
                    output_image.data(), width * channels);
