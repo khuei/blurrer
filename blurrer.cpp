@@ -101,24 +101,40 @@ int main(int argc, char *argv[]) {
   int strength = 5;
   unsigned char *image_data;
   std::string image_name;
-
-  if (vm.count("input")) {
-    image_name = vm["input"].as<std::string>();
-    image_data = stbi_load(image_name.c_str(), &width, &height, &channels, 0);
-  }
-
-  if (vm.count("strength"))
-    strength = vm["strength"].as<int>();
+  std::string algorithm = "gaussian";
+  std::string output_image;
 
   if (vm.count("help")) {
     std::cout << desc << "\n";
     return 0;
   }
 
+  if (vm.count("input")) {
+    image_name = vm["input"].as<std::string>();
+    image_data = stbi_load(image_name.c_str(), &width, &height, &channels, 0);
+  } else {
+    std::cerr << "Error: please specify input image" << std::endl;
+    return 1;
+  }
+
   if (image_data == nullptr) {
     std::cerr << "Error: could not load image: " << image_name << std::endl;
     return 1;
   }
+
+  if (vm.count("output")) {
+    output_image = vm["output"].as<std::string>();
+  } else {
+    std::cerr << "Error: please specify output path: " << image_name
+              << std::endl;
+    return 1;
+  }
+
+  if (vm.count("strength"))
+    strength = vm["strength"].as<int>();
+
+  if (vm.count("algo"))
+    algorithm = vm["algo"].as<std::string>();
 
   std::vector<std::vector<float>> image(height, std::vector<float>(width));
   for (int i = 0; i < height; ++i) {
