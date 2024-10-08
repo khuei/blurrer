@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
   unsigned char *image_data;
   std::string image_name;
   std::string algorithm = "gaussian";
-  std::string output_image;
+  std::string output_name;
 
   if (vm.count("help")) {
     std::cout << desc << "\n";
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (vm.count("output")) {
-    output_image = vm["output"].as<std::string>();
+    output_name = vm["output"].as<std::string>();
   } else {
     std::cerr << "Error: please specify output path: " << image_name
               << std::endl;
@@ -141,6 +141,28 @@ int main(int argc, char *argv[]) {
     for (int j = 0; j < width; ++j) {
       image[i][j] = static_cast<float>(image_data[(i * width + j) * channels]);
     }
+  }
+
+  std::vector<std::vector<float>> kernel;
+  std::vector<std::vector<float>> output_image;
+
+  if (algorithm == "gaussian")
+    kernel = gaussian_kernel(width, strength);
+
+  output_image = conv(image, kernel);
+
+  std::string extension = output_name.substr(output_name.find_last_of('.') + 1);
+  if (extension == "png") {
+    stbi_write_png(output_name.c_str(), width, height, channels,
+                   output_image.data(), width * channels);
+  } else if (extension == "jpg" || extension == "jpeg") {
+    stbi_write_jpg(output_name.c_str(), width, height, channels,
+                   output_image.data(), 100);
+  } else {
+    std::cerr << "Error: Unsupported output file format. Please use .png or "
+                 ".jpg/.jpeg"
+              << std::endl;
+    return 1;
   }
 
   stbi_image_free(image_data);
