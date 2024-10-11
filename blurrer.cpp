@@ -11,8 +11,7 @@
 #include "stb_image_write.h"
 
 std::vector<std::vector<std::vector<float>>>
-pad_image(const std::vector<std::vector<std::vector<float>>> &image, int pad_h,
-          int pad_w) {
+pad_image(const std::vector<std::vector<std::vector<float>>> &image, int pad_h, int pad_w) {
   int Hi = image.size();
   int Wi = image[0].size();
   int channels = image[0][0].size();
@@ -70,26 +69,23 @@ conv(const std::vector<std::vector<std::vector<float>>> &image,
   return out;
 }
 
-std::vector<std::vector<std::vector<float>>> gaussian_kernel(int size,
-                                                             int channels) {
-  std::vector<std::vector<float>> base_kernel(size,
-                                              std::vector<float>(size, 0));
+std::vector<std::vector<std::vector<float>>> gaussian_kernel(int size, int channels) {
+  std::vector<std::vector<float>> base_kernel(size, std::vector<float>(size, 0));
 
   double sigma = ((double)size / 2 > 1) ? (double)size / 2 : 1;
   int k = (size - 1) / 2;
 
   for (int i = 0; i < size; ++i) {
     for (int j = 0; j < size; ++j) {
-      double exponent =
-          -((std::pow(i - k, 2) + std::pow(j - k, 2)) / (2 * sigma * sigma));
+      double exponent = -((std::pow(i - k, 2) + std::pow(j - k, 2)) / (2 * sigma * sigma));
       base_kernel[i][j] = (1 / (2 * M_PI * sigma * sigma)) * std::exp(exponent);
     }
   }
 
-  // Create a 3D kernel with the same Gaussian kernel for each channel
   std::vector<std::vector<std::vector<float>>> kernel(
       size,
-      std::vector<std::vector<float>>(size, std::vector<float>(channels, 0)));
+      std::vector<std::vector<float>>(size, std::vector<float>(channels, 0))
+  );
 
   for (int i = 0; i < size; ++i) {
     for (int j = 0; j < size; ++j) {
@@ -102,13 +98,14 @@ std::vector<std::vector<std::vector<float>>> gaussian_kernel(int size,
   double sum = 0.0;
   for (int i = 0; i < size; ++i) {
     for (int j = 0; j < size; ++j) {
-      sum += kernel[i][j][0]; // Use any channel since they are the same
+      sum += kernel[i][j][0];
     }
   }
+
   for (int i = 0; i < size; ++i) {
     for (int j = 0; j < size; ++j) {
       for (int c = 0; c < channels; ++c) {
-        kernel[i][j][c] /= sum; // Normalize each channel
+        kernel[i][j][c] /= sum;
       }
     }
   }
