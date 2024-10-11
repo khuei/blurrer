@@ -16,9 +16,9 @@ convolution.
 - [x] Box
 - [x] Bilateral
 - [x] Median
-- [ ] Motion
+- [x] Motion
 
-## Blur Method Comparison (Strength: 20)
+## Blur Method Comparison
 
 | Blurring Method | Original Image | Blurred Image |
 |----------------|---------------|------------------|
@@ -26,6 +26,9 @@ convolution.
 | Box | ![Original Image](images/sample.jpg) | ![Blurred Image](images/box.jpg) |
 | Bilateral | ![Original Image](images/sample.jpg) | ![Blurred Image](images/bilateral.jpg) |
 | Median | ![Original Image](images/sample.jpg) | ![Blurred Image](images/median.jpg) |
+| Motion (Horizontal) | ![Original Image](images/sample.jpg) | ![Blurred Image](images/horizontal.jpg) |
+| Motion (Vertical) | ![Original Image](images/sample.jpg) | ![Blurred Image](images/vertical.jpg) |
+| Motion (Diagonal) | ![Original Image](images/sample.jpg) | ![Blurred Image](images/diagonal.jpg) |
 
 ## Dependencies
 

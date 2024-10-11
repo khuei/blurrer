@@ -228,6 +228,39 @@ flatten_image(const std::vector<std::vector<std::vector<float>>> &image,
   return flat_image;
 }
 
+std::vector<std::vector<std::vector<float>>> motion_kernel(int size, const std::string &direction, int channels) {
+    std::vector<std::vector<std::vector<float>>> kernel(size,
+        std::vector<std::vector<float>>(size, std::vector<float>(channels, 0)));
+
+    float value = 1.0f / size;
+
+    if (direction == "vertical") {
+        for (int i = 0; i < size; ++i) {
+            for (int c = 0; c < channels; ++c) {
+                kernel[i][0][c] = value;
+            }
+        }
+    } else if (direction == "horizontal") {
+        for (int j = 0; j < size; ++j) {
+            for (int c = 0; c < channels; ++c) {
+                kernel[0][j][c] = value;
+            }
+        }
+    } else if (direction == "diagonal") {
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                for (int c = 0; c < channels; ++c) {
+                    if (i == j) {
+                        kernel[i][j][c] = value;
+                    }
+                }
+            }
+        }
+    }
+
+    return kernel;
+}
+
 int main(int argc, char *argv[]) {
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()
@@ -237,6 +270,7 @@ int main(int argc, char *argv[]) {
       ("strength,s", boost::program_options::value<int>(), "set blur strength (default: 3)")
       ("sigma_range,sr", boost::program_options::value<float>(), "set sigma range for bilateral blur (default: 50.0)")
       ("sigma_space,sp", boost::program_options::value<float>(), "set sigma space for bilateral blur (default: 2.0)")
+      ("motion_direction,m", boost::program_options::value<std::string>(), "set direction for motion blur")
       ("help,h", "display usage message");
 
   if (argc == 1) {
@@ -253,6 +287,7 @@ int main(int argc, char *argv[]) {
   float sigma_space = DEFAULT_SIGMA_SPACE;
   float sigma_range = DEFAULT_SIGMA_RANGE;
   std::string algorithm = DEFAULT_ALGORITHM;
+  std::string motion_direction;
 
   int width, height, channels;
   unsigned char *image_data;
@@ -297,6 +332,20 @@ int main(int argc, char *argv[]) {
   if (vm.count("algo"))
     algorithm = vm["algo"].as<std::string>();
 
+  if (algorithm == "motion") {
+    if (vm.count("motion_direction")) {
+      motion_direction = vm["motion_direction"].as<std::string>();
+
+      if (motion_direction != "vertical" && motion_direction != "horizontal" && motion_direction != "diagonal") {
+        std::cerr << "Error: Invalid motion direction (valid: horizontal, vertical, diagonal)." << std::endl;
+        return 1;
+      }
+    } else {
+      std::cerr << "Error: Please specify motion direction (horizontal, vertical, diagonal)." << std::endl;
+      return 1;
+    }
+  }
+
   std::vector<std::vector<std::vector<float>>> image(
       height,
       std::vector<std::vector<float>>(width, std::vector<float>(channels)));
@@ -320,6 +369,8 @@ int main(int argc, char *argv[]) {
     blurred_image = bilateral_conv(image, bilateral_kernel(image, strength, sigma_space, sigma_range, channels), sigma_range);
   else if (algorithm == "median")
     blurred_image = median_filter(image, strength);
+  else if (algorithm == "motion")
+        blurred_image = conv(image, motion_kernel(strength, motion_direction, channels));
 
   auto output_image = flatten_image(blurred_image, width, height, channels);
   std::string extension = output_name.substr(output_name.find_last_of('.') + 1);
