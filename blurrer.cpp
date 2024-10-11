@@ -270,7 +270,7 @@ int main(int argc, char *argv[]) {
       ("strength,s", boost::program_options::value<int>(), "set blur strength (default: 3)")
       ("sigma_range,sr", boost::program_options::value<float>(), "set sigma range for bilateral blur (default: 50.0)")
       ("sigma_space,sp", boost::program_options::value<float>(), "set sigma space for bilateral blur (default: 2.0)")
-      ("motion_direction,m", boost::program_options::value<std::string>(), "set direction for motion blur")
+      ("direction,d", boost::program_options::value<std::string>(), "set direction for motion blur")
       ("help,h", "display usage message");
 
   if (argc == 1) {
@@ -333,8 +333,8 @@ int main(int argc, char *argv[]) {
     algorithm = vm["algo"].as<std::string>();
 
   if (algorithm == "motion") {
-    if (vm.count("motion_direction")) {
-      motion_direction = vm["motion_direction"].as<std::string>();
+    if (vm.count("direction")) {
+      motion_direction = vm["direction"].as<std::string>();
 
       if (motion_direction != "vertical" && motion_direction != "horizontal" && motion_direction != "diagonal") {
         std::cerr << "Error: Invalid motion direction (valid: horizontal, vertical, diagonal)." << std::endl;

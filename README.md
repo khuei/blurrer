@@ -51,8 +51,11 @@ $ blurrer --input <input_image> --output <output_image> [options]
 ```
 
 Options:
-- `-i`, `--input <input_image>`: Path to the input image file (required).
-- `-o`, `--output <output_image>`: Path to save the output image file (required).
-- `-a`, `--algo <algorithm>`: Set the algorithm for blurring (default: "gaussian").
-- `-s`, `--strength <strength>`: Set the blur strength (default: 3).
+- `-i`, `--input <string>`: Path to the input image file (required).
+- `-o`, `--output <string>`: Path to save the output image file (required).
+- `-a`, `--algo <string>`: Set the algorithm for blurring (default: "gaussian").
+- `-s`, `--strength <number>`: Set the blur strength (default: 3).
+- `-sr`, `--sigma_range <number>`: Set sigma range for bilateral blur (default: 50.0).
+- `-sp`, `--sigma_space <number>`: Set sigma space for bilateral blur (default: 2.0).
+- `-d`, `--direction <string>`: Set direction for motion blur
 - `-h`, `--help`: Display usage message.
