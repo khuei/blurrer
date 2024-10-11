@@ -69,6 +69,17 @@ conv(const std::vector<std::vector<std::vector<float>>> &image,
   return out;
 }
 
+std::vector<std::vector<std::vector<float>>> box_kernel(int size, int channels) {
+  float value = 1.0f / (size * size);
+
+  std::vector<std::vector<std::vector<float>>> kernel(
+      size,
+      std::vector<std::vector<float>>(size, std::vector<float>(channels, value))
+  );
+
+  return kernel;
+}
+
 std::vector<std::vector<std::vector<float>>> gaussian_kernel(int size, int channels) {
   std::vector<std::vector<std::vector<float>>> kernel(
       size,
@@ -192,7 +203,13 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  auto blurred_image = conv(image, gaussian_kernel(strength, channels));
+  std::vector<std::vector<std::vector<float>>> blurred_image;
+
+  if (algorithm == "gaussian")
+    blurred_image = conv(image, gaussian_kernel(strength, channels));
+  else if (algorithm == "box")
+    blurred_image = conv(image, box_kernel(strength, channels));
+
   auto output_image = flatten_image(blurred_image, width, height, channels);
   std::string extension = output_name.substr(output_name.find_last_of('.') + 1);
 

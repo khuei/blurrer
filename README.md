@@ -13,7 +13,7 @@ convolution.
 ## Supported Blur Methods
 
 - [x] Gaussian
-- [ ] Box
+- [x] Box
 - [ ] Bilateral
 - [ ] Median
 - [ ] Motion
@@ -23,6 +23,7 @@ convolution.
 | Blurring Method | Original Image | Blurred Image |
 |----------------|---------------|------------------|
 | Gaussian | ![Original Image](images/sample.jpg) | ![Blurred Image](images/gaussian.jpg) |
+| Box | ![Original Image](images/sample.jpg) | ![Blurred Image](images/box.jpg) |
 
 ## Dependencies
 
