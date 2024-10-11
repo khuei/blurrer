@@ -14,7 +14,7 @@ convolution.
 
 - [x] Gaussian
 - [x] Box
-- [ ] Bilateral
+- [x] Bilateral
 - [ ] Median
 - [ ] Motion
 
@@ -24,6 +24,7 @@ convolution.
 |----------------|---------------|------------------|
 | Gaussian | ![Original Image](images/sample.jpg) | ![Blurred Image](images/gaussian.jpg) |
 | Box | ![Original Image](images/sample.jpg) | ![Blurred Image](images/box.jpg) |
+| Bilateral | ![Original Image](images/sample.jpg) | ![Blurred Image](images/bilateral.jpg) |
 
 ## Dependencies
 
