@@ -181,6 +181,36 @@ std::vector<std::vector<std::vector<float>>> bilateral_kernel(
   return kernel;
 }
 
+std::vector<std::vector<std::vector<float>>>
+median_filter(const std::vector<std::vector<std::vector<float>>> &image, int kernel_size) {
+    int Hi = image.size();
+    int Wi = image[0].size();
+    int channels = image[0][0].size();
+    int pad_h = kernel_size / 2;
+    int pad_w = kernel_size / 2;
+    std::vector<std::vector<std::vector<float>>> out(
+        Hi, std::vector<std::vector<float>>(Wi, std::vector<float>(channels, 0)));
+
+    std::vector<std::vector<std::vector<float>>> padded = pad_image(image, pad_h, pad_w);
+
+    for (int image_h = 0; image_h < Hi; ++image_h) {
+        for (int image_w = 0; image_w < Wi; ++image_w) {
+            for (int c = 0; c < channels; ++c) {
+                std::vector<float> neighborhood;
+                for (int kh = 0; kh < kernel_size; ++kh) {
+                    for (int kw = 0; kw < kernel_size; ++kw) {
+                        neighborhood.push_back(padded[image_h + kh][image_w + kw][c]);
+                    }
+                }
+                std::sort(neighborhood.begin(), neighborhood.end());
+                out[image_h][image_w][c] = neighborhood[neighborhood.size() / 2];
+            }
+        }
+    }
+
+    return out;
+}
+
 std::vector<unsigned char>
 flatten_image(const std::vector<std::vector<std::vector<float>>> &image,
               int width, int height, int channels) {
@@ -288,6 +318,8 @@ int main(int argc, char *argv[]) {
     blurred_image = conv(image, box_kernel(strength, channels));
   else if (algorithm == "bilateral")
     blurred_image = bilateral_conv(image, bilateral_kernel(image, strength, sigma_space, sigma_range, channels), sigma_range);
+  else if (algorithm == "median")
+    blurred_image = median_filter(image, strength);
 
   auto output_image = flatten_image(blurred_image, width, height, channels);
   std::string extension = output_name.substr(output_name.find_last_of('.') + 1);
