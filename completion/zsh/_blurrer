@@ -1,0 +1,32 @@
+#compdef blurrer
+
+_blurrer() {
+    local -a algorithms directions
+
+    # Define the available algorithms
+    algorithms=('gaussian' 'box' 'bilateral' 'median' 'motion')
+
+    # Define the available directions
+    directions=('horizontal' 'vertical' 'diagonal')
+
+    # Use _arguments to define the options and completions
+    _arguments \
+        '-i[Input file]' \
+        '--input[Input file]' \
+        '-o[Output file]' \
+        '--output[Output file]' \
+        '(-a --algo)'{-a,--algo}'[Algorithm]:algorithm:(${(j:|:)algorithms})' \
+        '-s[Strength of effect]' \
+        '--strength[Strength of effect]' \
+        '--sr[Sigma range for bilateral filter]' \
+        '--sigma_range[Sigma range for bilateral filter]' \
+        '--sp[Sigma space for bilateral filter]' \
+        '--sigma_space[Sigma space for bilateral filter]' \
+        '(-d --direction)'{-d,--direction}'[Direction for motion blur]:direction:(${(j:|:)directions})' \
+        '-h[Show help]' \
+        '--help[Show help]'
+}
+
+# Register the completion function for 'blurrer'
+compdef _blurrer blurrer
+
